@@ -1,3 +1,6 @@
+import compressionmanager.Compress;
+import compressionmanager.Decompress;
+
 public class Main {
     public static void main(String[] args) {
         Compress compress = new Compress();
