@@ -53,7 +53,7 @@ public class Decompress {
         return binaryString;
     }
 
-    private Node makeBinaryTree(String filePath) throws InvalidFileExtensionException, IOException {
+    private Node makeBinaryTree(String filePath) throws InvalidFileExtensionException, IOException, BrokenFileException {
         List<Node> nodes = readDictionary(filePath);
 
         Node root = new Node(0, null);
@@ -93,7 +93,7 @@ public class Decompress {
         return root;
     }
 
-    public void decompress(String filePath) throws InvalidFileExtensionException, IOException {
+    public void decompress(String filePath) throws InvalidFileExtensionException, IOException, BrokenFileException {
         Node root = makeBinaryTree(filePath);
         Node pointer = root;
 
@@ -125,10 +125,12 @@ public class Decompress {
                 if(bin.charAt(i) == '0') {
                     pointer = pointer.getLeft();
                 }
-
-                if(bin.charAt(i) == '1') {
+                else if(bin.charAt(i) == '1') {
                     pointer = pointer.getRight();
                 }
+
+                if(pointer == null)
+                    throw new BrokenFileException("Skompresowany plik jest uszkodzony");
 
                 if(pointer.getLeft() == null && pointer.getRight() == null) {
                     dos.write(pointer.getSign());
@@ -139,5 +141,6 @@ public class Decompress {
 
         dos.close();
         fos.close();
+        System.out.println("Poprawnie zdekompresowano");
     }
 }
