@@ -1,5 +1,4 @@
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Decompress {
@@ -11,6 +10,7 @@ public class Decompress {
     private int codeLength;
     private String code;
     private List<Node> nodeList;
+    private String bin;
 
     public Decompress() {
 
@@ -39,13 +39,10 @@ public class Decompress {
         }
         inputStream.close();
 
-//        for(Node node : nodeList) {
-//            System.out.println(node.getSign() + ": " + node.getCode());
-//        }
         return nodeList;
     }
 
-    public static String intToBinaryString(int a) {
+    protected String intToBinaryString(int a) {
         String binaryString = Integer.toBinaryString(a & 0xFF);
         // uzupełnienie zerami z przodu, aby uzyskać 8 cyfr
         while (binaryString.length() < 8) {
@@ -54,7 +51,7 @@ public class Decompress {
         return binaryString;
     }
 
-    public Node makeBinaryTree(String filePath) throws InvalidFileExtensionException, IOException {
+    private Node makeBinaryTree(String filePath) throws InvalidFileExtensionException, IOException {
         List<Node> nodes = readDictionary(filePath);
 
         Node root = new Node(0, null);
@@ -96,6 +93,49 @@ public class Decompress {
 
     public void decompress(String filePath) throws InvalidFileExtensionException, IOException {
         Node root = makeBinaryTree(filePath);
-        
+        Node pointer = root;
+
+        File file = new File("decoded.txt");
+        FileOutputStream fos = new FileOutputStream(file);
+        DataOutputStream dos = new DataOutputStream(fos);
+
+        inputStream = new FileInputStream(filePath);
+        bin = "";
+
+        inputStream.read();
+        inputStream.read();
+        for(int i = 0; i < dictLength; i++) {
+            inputStream.read();
+            inputStream.read();
+            for (int j = 0; j < (int) Math.ceil(codeLength / 8.0); j++) {
+                inputStream.read();
+            }
+        }
+
+        while((data = inputStream.read()) != -1) {
+            bin = intToBinaryString(data);
+
+            if(inputStream.available() == 0) {
+                bin = bin.substring(0, bin.length() - extraBits);
+            }
+
+            for(int i = 0; i < bin.length(); i++) {
+                if(bin.charAt(i) == '0') {
+                    pointer = pointer.getLeft();
+                }
+
+                if(bin.charAt(i) == '1') {
+                    pointer = pointer.getRight();
+                }
+
+                if(pointer.getLeft() == null && pointer.getRight() == null) {
+                    dos.write(pointer.getSign());
+                    pointer = root;
+                }
+            }
+        }
+
+        dos.close();
+        fos.close();
     }
 }
