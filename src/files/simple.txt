@@ -1,1 +1,0 @@
-Nasz kompresor jest super. Działa wydajnie i do tego ma jeszcze GUI :)
