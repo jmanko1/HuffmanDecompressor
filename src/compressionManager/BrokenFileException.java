@@ -1,4 +1,4 @@
-package compressionmanager;
+package compressionManager;
 
 public class BrokenFileException extends Exception {
     public BrokenFileException() {

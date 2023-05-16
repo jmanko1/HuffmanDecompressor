@@ -1,4 +1,4 @@
-import gui.CompressorGUI;
+import graphicalUserInterface.CompressorGUI;
 
 public class Main {
     public static void main(String[] args) {

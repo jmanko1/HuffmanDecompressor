@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
-public class Compress {
+public class Compressor {
     private ExeRunner exeRunner;
-    public Compress() {
+    public Compressor() {
         exeRunner = new ExeRunner("src\\compressor.exe");
     }
 

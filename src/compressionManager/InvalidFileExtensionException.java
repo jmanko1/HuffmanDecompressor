@@ -1,4 +1,4 @@
-package compressionmanager;
+package compressionManager;
 
 public class InvalidFileExtensionException extends Exception {
     public InvalidFileExtensionException() {

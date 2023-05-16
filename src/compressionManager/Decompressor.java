@@ -3,7 +3,7 @@ package compressionManager;
 import java.io.*;
 import java.util.*;
 
-public class Decompress {
+public class Decompressor {
     private FileInputStream inputStream;
     private int data;
     private int extraBits;
@@ -14,7 +14,7 @@ public class Decompress {
     private List<Node> nodeList;
     private String bin;
 
-    public Decompress() {
+    public Decompressor() {
 
     }
 
