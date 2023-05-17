@@ -18,9 +18,13 @@ public class Decompressor {
 
     }
 
-    public List<Node> readDictionary(String filePath) throws InvalidFileExtensionException, IOException {
+    public List<Node> readDictionary(String filePath) throws IOException {
+        if (!(new File(filePath).isFile())) {
+            throw new FileNotFoundException("Plik nie istnieje.");
+        }
+
         if(!filePath.endsWith(".cps"))
-            throw new InvalidFileExtensionException("To nie jest plik skompresowany lub nie jest on obsługiwany");
+            throw new InvalidFileExtensionException("Nieobsługiwany typl pliku przez dekompresor.");
 
         inputStream = new FileInputStream(filePath);
         extraBits = inputStream.read();
@@ -46,6 +50,7 @@ public class Decompressor {
 
     protected String intToBinaryString(int a) {
         String binaryString = Integer.toBinaryString(a & 0xFF);
+
         // uzupełnienie zerami z przodu, aby uzyskać 8 cyfr
         while (binaryString.length() < 8) {
             binaryString = "0" + binaryString;
@@ -53,7 +58,7 @@ public class Decompressor {
         return binaryString;
     }
 
-    private Node makeBinaryTree(String filePath) throws InvalidFileExtensionException, IOException, BrokenFileException {
+    private Node makeBinaryTree(String filePath) throws IOException {
         List<Node> nodes = readDictionary(filePath);
 
         Node root = new Node(0, null);
@@ -93,7 +98,7 @@ public class Decompressor {
         return root;
     }
 
-    public void decompress(String inputFilePath) throws InvalidFileExtensionException, IOException, BrokenFileException {
+    public void decompress(String inputFilePath) throws IOException {
         Node root = makeBinaryTree(inputFilePath);
         Node pointer = root;
 

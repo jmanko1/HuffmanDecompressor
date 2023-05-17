@@ -1,6 +1,8 @@
 package compressionManager;
 
-public class BrokenFileException extends Exception {
+import java.io.IOException;
+
+public class BrokenFileException extends IOException {
     public BrokenFileException() {
         super();
     }

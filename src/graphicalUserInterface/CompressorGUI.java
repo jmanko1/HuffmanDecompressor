@@ -8,7 +8,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 public class CompressorGUI {
@@ -17,7 +16,8 @@ public class CompressorGUI {
     private JPanel optionFileSubPanel;
     private JPanel optionCompressSubPanel;
     private JPanel fileContentPanel;
-    private JLabel fileContentLabel;
+    private JTextArea fileContentArea;
+    private JScrollPane fileContentScrollPane;
     private JTextField filePathInputField;
     private JButton filePathInputButton;
     private JButton compressButton;
@@ -26,6 +26,8 @@ public class CompressorGUI {
     private final int margin;
     private final int borderMargin;
 
+    Compressor compressor;
+    Decompressor decompressor;
     private fileContentReader myReader;
 
     public CompressorGUI()
@@ -33,6 +35,8 @@ public class CompressorGUI {
         margin = 5;
         borderMargin = 10;
 
+        compressor = new Compressor();
+        decompressor = new Decompressor();
         myReader = new fileContentReader();
 
         startWindow();
@@ -71,14 +75,17 @@ public class CompressorGUI {
         fileContentPanel.setBackground(Color.RED);
         frame.add(fileContentPanel);
 
-        fileContentLabel = new JLabel("Choose file!");
-        fileContentPanel.add(fileContentLabel);
+        // File content area
+        fileContentArea = new JTextArea();
+        fileContentArea.setEditable(false);
+        fileContentArea.setLineWrap(true);
+        fileContentArea.setBorder(new EmptyBorder(borderMargin, borderMargin, borderMargin, borderMargin));
+        fileContentScrollPane = new JScrollPane(fileContentArea);
+        fileContentPanel.add(fileContentScrollPane);
 
         // File path input button
         filePathInputButton = new MyButton("Choose file...");
-        //filePathInputButton.setMinimumSize(new Dimension(50, 50));
-        //filePathInputButton.setMaximumSize(new Dimension(100, 50));
-        filePathInputButton.addActionListener(e -> showFileChooser(1));
+        filePathInputButton.addActionListener(e -> showFileChooser());
         optionFileSubPanel.add(filePathInputButton, BorderLayout.WEST);
 
         // File path input
@@ -87,16 +94,18 @@ public class CompressorGUI {
         optionFileSubPanel.add(filePathInputField, BorderLayout.CENTER);
 
         // Compress button
-        decompressButton = new MyButton("Compress");
-        decompressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, decompressButton.getMaximumSize().height));
-        optionCompressSubPanel.add(decompressButton);
+        compressButton = new MyButton("Compress");
+        compressButton.addActionListener(e -> Compress());
+        compressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, compressButton.getMaximumSize().height));
+        optionCompressSubPanel.add(compressButton);
 
         optionCompressSubPanel.add(Box.createHorizontalStrut(margin));
 
         // Decompress button
-        compressButton = new MyButton("Decompress");
-        compressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, compressButton.getMaximumSize().height));
-        optionCompressSubPanel.add(compressButton);
+        decompressButton = new MyButton("Decompress");
+        decompressButton.addActionListener(e -> Decompress());
+        decompressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, decompressButton.getMaximumSize().height));
+        optionCompressSubPanel.add(decompressButton);
 
         frame.pack();
         frame.setVisible(true);
@@ -119,46 +128,42 @@ public class CompressorGUI {
 
             private void handleInputChange() {
                 try {
-                    fileContentLabel.setText(myReader.readFileContent(filePathInputField.getText()));
+                    fileContentArea.setText(myReader.readFileContent(filePathInputField.getText()));
                 }
                 catch (IOException e)
                 {
-                    fileContentLabel.setText("lala");
+                    fileContentArea.setText("");
                 }
             }
         });
     }
 
-    private void showFileChooser(int userChoice) {
-        JFileChooser fileChooser = new JFileChooser("C:\\Users\\Kuba\\IdeaProjects\\decompressor\\src");
+    private void showFileChooser() {
+        FileDialog fileChooser = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
+        fileChooser.setDirectory("%userprofile%");
+        fileChooser.setVisible(true);
 
-        int returnValue = fileChooser.showOpenDialog(frame);
-
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            String filePath = selectedFile.getAbsolutePath();
-
-            filePathInputField.setText(filePath);
+        if (fileChooser.getDirectory() != null && fileChooser.getFile() != null) {
+            String filename = fileChooser.getDirectory() + fileChooser.getFile();
+            filePathInputField.setText(filename);
         }
     }
 
-    private void initCompression(String filePath){
-        Compressor compressor = new Compressor();
+    private void Compress(){
         try {
-            compressor.compress(filePath);
+            compressor.compress(filePathInputField.getText());
             JOptionPane.showMessageDialog(frame, "Poprawnie skompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, e, "Błąd", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void initDecompression(String filePath){
-        Decompressor decompressor = new Decompressor();
+    private void Decompress(){
         try {
-            decompressor.decompress(filePath);
+            decompressor.decompress(filePathInputField.getText());
             JOptionPane.showMessageDialog(frame, "Poprawnie zdekompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, e, "Błąd", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

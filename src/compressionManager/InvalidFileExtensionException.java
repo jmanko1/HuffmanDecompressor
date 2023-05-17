@@ -1,6 +1,8 @@
 package compressionManager;
 
-public class InvalidFileExtensionException extends Exception {
+import java.io.IOException;
+
+public class InvalidFileExtensionException extends IOException {
     public InvalidFileExtensionException() {
         super();
     }

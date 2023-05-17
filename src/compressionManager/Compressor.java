@@ -2,6 +2,7 @@ package compressionManager;
 
 import exeRunner.ExeRunner;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -12,9 +13,13 @@ public class Compressor {
         exeRunner = new ExeRunner("src\\compressor.exe");
     }
 
-    public void compress(String filePath) throws IOException, InterruptedException, InvalidFileExtensionException {
+    public void compress(String filePath) throws IOException, InterruptedException {
+        if (!(new File(filePath).isFile())) {
+            throw new FileNotFoundException("Plik nie istnieje.");
+        }
+
         if(!filePath.endsWith(".txt"))
-            throw new InvalidFileExtensionException("Nieobsługiwany typ pliku");
+            throw new InvalidFileExtensionException("Nieobsługiwany typ pliku przez kompresor.");
 
         exeRunner.run("-i " + filePath);
 
