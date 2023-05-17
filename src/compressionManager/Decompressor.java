@@ -24,7 +24,7 @@ public class Decompressor {
         }
 
         if(!filePath.endsWith(".cps"))
-            throw new InvalidFileExtensionException("Nieobsługiwany typl pliku przez dekompresor.");
+            throw new InvalidFileExtensionException("Dekompresor nie obsługuje pliku o tym rozszerzeniu.");
 
         inputStream = new FileInputStream(filePath);
         extraBits = inputStream.read();
@@ -35,6 +35,7 @@ public class Decompressor {
             sign = inputStream.read();
             codeLength = inputStream.read();
             code = "";
+
             for(int j = 0; j < (int) Math.ceil(codeLength / 8.0); j++) {
                 data = inputStream.read();
                 code += intToBinaryString(data);
@@ -106,7 +107,7 @@ public class Decompressor {
         if (inputFilePath.endsWith(".cps")) {
             outFilePath = inputFilePath.replace(".cps", ".txt");
         }
-        else{
+        else {
             throw new InvalidFileExtensionException("Nieobsługiwany format pliku.");
         }
 

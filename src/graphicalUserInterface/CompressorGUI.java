@@ -10,6 +10,9 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.IOException;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+
+
 public class CompressorGUI {
     private JFrame frame;
     private JPanel optionPanel;
@@ -29,7 +32,7 @@ public class CompressorGUI {
 
     Compressor compressor;
     Decompressor decompressor;
-    private fileContentReader myReader;
+    private fileContentReader fileReader;
 
     public CompressorGUI()
     {
@@ -38,7 +41,9 @@ public class CompressorGUI {
 
         compressor = new Compressor();
         decompressor = new Decompressor();
-        myReader = new fileContentReader();
+        fileReader = new fileContentReader();
+
+        FlatDarculaLaf.setup();
 
         startWindow();
     }
@@ -53,13 +58,11 @@ public class CompressorGUI {
         optionPanel = new JPanel();
         optionPanel.setBorder(new EmptyBorder(borderMargin, borderMargin, borderMargin, borderMargin));
         optionPanel.setLayout(new BorderLayout());
-        optionPanel.setBackground(Color.CYAN);
         frame.add(optionPanel, BorderLayout.NORTH);
 
         // SubPanel opcji - plik
         optionFileSubPanel = new JPanel();
         optionFileSubPanel.setLayout(new BorderLayout());
-        optionFileSubPanel.setBackground(Color.CYAN);
         optionPanel.add(optionFileSubPanel, BorderLayout.NORTH);
 
         optionPanel.add(Box.createVerticalStrut(margin));
@@ -67,13 +70,12 @@ public class CompressorGUI {
         // SubPanel opcji - kompresja
         optionCompressSubPanel = new JPanel();
         optionCompressSubPanel.setLayout(new BoxLayout(optionCompressSubPanel, BoxLayout.X_AXIS));
-        optionCompressSubPanel.setBackground(Color.CYAN);
         optionPanel.add(optionCompressSubPanel, BorderLayout.SOUTH);
 
         // Panel pliku
         fileContentPanel = new JPanel();
         fileContentPanel.setLayout(new BorderLayout());
-        fileContentPanel.setBackground(Color.CYAN);
+        fileContentPanel.setBorder(new EmptyBorder(0, borderMargin, 0, borderMargin));
         frame.add(fileContentPanel);
 
         // File content area
@@ -134,8 +136,9 @@ public class CompressorGUI {
 
             private void handleInputChange() {
                 try {
-                    fileContentArea.setText(myReader.readFile(filePathInputField.getText()));
-                    if (myReader.isCPSFile()) {
+                    fileContentArea.setText(fileReader.readFile(filePathInputField.getText()));
+
+                    if (fileReader.isCPSFile()) {
                         fileContentTitle.setText("CPS File dictionary");
                     }
                     else {
@@ -165,7 +168,15 @@ public class CompressorGUI {
     private void Compress() {
         try {
             compressor.compress(filePathInputField.getText());
-            JOptionPane.showMessageDialog(frame, "Poprawnie skompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+
+            int sizeOld = fileReader.getFileSizeKB(filePathInputField.getText());
+            int sizeNew = fileReader.getFileSizeKB(filePathInputField.getText().replace(".txt", ".cps"));
+
+            String message = "Poprawnie skompresowano plik.\n\n";
+            message += "Rozmiar przed kompresją: " + sizeOld + " KB\n";
+            message += "Rozmiar po kompresji: " + sizeNew + " KB\n";
+
+            JOptionPane.showMessageDialog(frame, message, "Sukces", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
         }
@@ -174,7 +185,7 @@ public class CompressorGUI {
     private void Decompress() {
         try {
             decompressor.decompress(filePathInputField.getText());
-            JOptionPane.showMessageDialog(frame, "Poprawnie zdekompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Poprawnie zdekompresowano plik.", "Sukces", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
         }

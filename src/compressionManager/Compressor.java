@@ -19,7 +19,7 @@ public class Compressor {
         }
 
         if(!filePath.endsWith(".txt"))
-            throw new InvalidFileExtensionException("Nieobsługiwany typ pliku przez kompresor.");
+            throw new InvalidFileExtensionException("Kompresor nie obsługuje pliku o tym rozszerzeniu.");
 
         exeRunner.run("-i " + filePath);
 

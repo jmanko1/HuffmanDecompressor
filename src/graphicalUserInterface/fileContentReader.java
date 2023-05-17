@@ -30,10 +30,10 @@ public class fileContentReader {
         ArrayList<Node> nodes = (ArrayList<Node>) decompressor.readDictionary(filePath);
         StringBuilder content = new StringBuilder();
 
-        content.append("<sign>\t<code>\n");
+        content.append("\tASCII\tBinary code\n\n\t");
 
         for (Node node : nodes) {
-            content.append(node.getSign()).append("\t").append(node.getCode()).append("\n");
+            content.append(node.getSign()).append("\t").append(node.getCode()).append("\n\t");
         }
 
         return content.toString();
@@ -56,5 +56,15 @@ public class fileContentReader {
 
     public boolean isCPSFile() {
         return isCPSFile;
+    }
+
+    public int getFileSizeKB(String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+
+        if (!file.isFile()) {
+            throw new FileNotFoundException("Plik nie istnieje.");
+        }
+
+        return (int) (file.length() / 1024);
     }
 }
