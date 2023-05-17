@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
 public class Compressor {
-    private ExeRunner exeRunner;
+    private final ExeRunner exeRunner;
     public Compressor() {
         exeRunner = new ExeRunner("src\\compressor.exe");
     }

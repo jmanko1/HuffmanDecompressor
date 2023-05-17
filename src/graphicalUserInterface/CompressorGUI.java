@@ -32,7 +32,7 @@ public class CompressorGUI {
 
     Compressor compressor;
     Decompressor decompressor;
-    private fileContentReader fileReader;
+    private final fileContentReader fileReader;
 
     public CompressorGUI()
     {
@@ -86,23 +86,27 @@ public class CompressorGUI {
         fileContentScrollPane = new JScrollPane(fileContentArea);
         fileContentPanel.add(fileContentScrollPane, BorderLayout.CENTER);
 
+        // File content title
         fileContentTitle = new JLabel("Choose file");
         fileContentTitle.setHorizontalAlignment(JLabel.CENTER);
         fileContentTitle.setBorder(new EmptyBorder(0, 0, margin, 0));
         fileContentPanel.add(fileContentTitle, BorderLayout.SOUTH);
 
         // File path input button
-        filePathInputButton = new MyButton("Choose file...");
+        filePathInputButton = new JButton("Choose file...");
         filePathInputButton.addActionListener(e -> showFileDialog());
         optionFileSubPanel.add(filePathInputButton, BorderLayout.WEST);
 
         // File path input
         filePathInputField = new JTextField();
-        filePathInputField.setFont(new Font("Consolas", Font.PLAIN, 12));
+        filePathInputField.setBorder(BorderFactory.createCompoundBorder(
+                filePathInputField.getBorder(),
+                BorderFactory.createEmptyBorder(2, 0, 0, 0)));
+        filePathInputField.setFont(new Font("Consolas", Font.PLAIN, 13));
         optionFileSubPanel.add(filePathInputField, BorderLayout.CENTER);
 
         // Compress button
-        compressButton = new MyButton("Compress");
+        compressButton = new JButton("Compress");
         compressButton.addActionListener(e -> Compress());
         compressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, compressButton.getMaximumSize().height));
         optionCompressSubPanel.add(compressButton);
@@ -110,7 +114,7 @@ public class CompressorGUI {
         optionCompressSubPanel.add(Box.createHorizontalStrut(margin));
 
         // Decompress button
-        decompressButton = new MyButton("Decompress");
+        decompressButton = new JButton("Decompress");
         decompressButton.addActionListener(e -> Decompress());
         decompressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, decompressButton.getMaximumSize().height));
         optionCompressSubPanel.add(decompressButton);

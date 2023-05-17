@@ -30,10 +30,10 @@ public class fileContentReader {
         ArrayList<Node> nodes = (ArrayList<Node>) decompressor.readDictionary(filePath);
         StringBuilder content = new StringBuilder();
 
-        content.append("\tASCII\tBinary code\n\n\t");
+        content.append("  ASCII\tBinary code\n\n  ");
 
         for (Node node : nodes) {
-            content.append(node.getSign()).append("\t").append(node.getCode()).append("\n\t");
+            content.append(node.getSign()).append("\t").append(node.getCode()).append("\n  ");
         }
 
         return content.toString();

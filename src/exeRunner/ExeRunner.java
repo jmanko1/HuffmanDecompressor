@@ -3,7 +3,7 @@ package exeRunner;
 import java.io.IOException;
 
 public class ExeRunner {
-    private String path;
+    private final String path;
     private Process process;
     private int exitCode;
 
