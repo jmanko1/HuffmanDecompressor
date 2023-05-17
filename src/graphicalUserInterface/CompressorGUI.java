@@ -16,6 +16,7 @@ public class CompressorGUI {
     private JPanel optionFileSubPanel;
     private JPanel optionCompressSubPanel;
     private JPanel fileContentPanel;
+    private JLabel fileContentTitle;
     private JTextArea fileContentArea;
     private JScrollPane fileContentScrollPane;
     private JTextField filePathInputField;
@@ -46,7 +47,7 @@ public class CompressorGUI {
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Huffman compressor");
-        frame.setMinimumSize(new Dimension(600, 600));
+        frame.setMinimumSize(new Dimension(700, 350));
 
         // Panel opcji
         optionPanel = new JPanel();
@@ -71,8 +72,8 @@ public class CompressorGUI {
 
         // Panel pliku
         fileContentPanel = new JPanel();
-        fileContentPanel.setLayout(new GridLayout(0, 1));
-        fileContentPanel.setBackground(Color.RED);
+        fileContentPanel.setLayout(new BorderLayout());
+        fileContentPanel.setBackground(Color.CYAN);
         frame.add(fileContentPanel);
 
         // File content area
@@ -81,11 +82,16 @@ public class CompressorGUI {
         fileContentArea.setLineWrap(true);
         fileContentArea.setBorder(new EmptyBorder(borderMargin, borderMargin, borderMargin, borderMargin));
         fileContentScrollPane = new JScrollPane(fileContentArea);
-        fileContentPanel.add(fileContentScrollPane);
+        fileContentPanel.add(fileContentScrollPane, BorderLayout.CENTER);
+
+        fileContentTitle = new JLabel("Choose file");
+        fileContentTitle.setHorizontalAlignment(JLabel.CENTER);
+        fileContentTitle.setBorder(new EmptyBorder(0, 0, margin, 0));
+        fileContentPanel.add(fileContentTitle, BorderLayout.SOUTH);
 
         // File path input button
         filePathInputButton = new MyButton("Choose file...");
-        filePathInputButton.addActionListener(e -> showFileChooser());
+        filePathInputButton.addActionListener(e -> showFileDialog());
         optionFileSubPanel.add(filePathInputButton, BorderLayout.WEST);
 
         // File path input
@@ -128,28 +134,35 @@ public class CompressorGUI {
 
             private void handleInputChange() {
                 try {
-                    fileContentArea.setText(myReader.readFileContent(filePathInputField.getText()));
+                    fileContentArea.setText(myReader.readFile(filePathInputField.getText()));
+                    if (myReader.isCPSFile()) {
+                        fileContentTitle.setText("CPS File dictionary");
+                    }
+                    else {
+                        fileContentTitle.setText("File content");
+                    }
                 }
                 catch (IOException e)
                 {
                     fileContentArea.setText("");
+                    fileContentTitle.setText("Choose file");
                 }
             }
         });
     }
 
-    private void showFileChooser() {
-        FileDialog fileChooser = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
-        fileChooser.setDirectory("%userprofile%");
-        fileChooser.setVisible(true);
+    private void showFileDialog() {
+        FileDialog fileDialog = new FileDialog(frame, "Choose a file", FileDialog.LOAD);
+        fileDialog.setDirectory("%userprofile%");
+        fileDialog.setVisible(true);
 
-        if (fileChooser.getDirectory() != null && fileChooser.getFile() != null) {
-            String filename = fileChooser.getDirectory() + fileChooser.getFile();
+        if (fileDialog.getDirectory() != null && fileDialog.getFile() != null) {
+            String filename = fileDialog.getDirectory() + fileDialog.getFile();
             filePathInputField.setText(filename);
         }
     }
 
-    private void Compress(){
+    private void Compress() {
         try {
             compressor.compress(filePathInputField.getText());
             JOptionPane.showMessageDialog(frame, "Poprawnie skompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
@@ -158,7 +171,7 @@ public class CompressorGUI {
         }
     }
 
-    private void Decompress(){
+    private void Decompress() {
         try {
             decompressor.decompress(filePathInputField.getText());
             JOptionPane.showMessageDialog(frame, "Poprawnie zdekompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);

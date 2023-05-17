@@ -1,11 +1,11 @@
 package graphicalUserInterface;
 
 import compressionManager.Decompressor;
-import compressionManager.InvalidFileExtensionException;
 import compressionManager.Node;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,29 +13,48 @@ import java.util.ArrayList;
 
 public class fileContentReader {
     private Decompressor decompressor;
+    private boolean isCPSFile;
 
     public fileContentReader() {
         decompressor = new Decompressor();
+        isCPSFile = false;
     }
 
-    public String readFileContent(String filePath) throws IOException {
+    private String readFileContent(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        byte[] bytes = Files.readAllBytes(path);
+        return new String(bytes);
+    }
+
+    private String readFileDictionary(String filePath) throws IOException {
+        ArrayList<Node> nodes = (ArrayList<Node>) decompressor.readDictionary(filePath);
+        StringBuilder content = new StringBuilder();
+
+        content.append("<sign>\t<code>\n");
+
+        for (Node node : nodes) {
+            content.append(node.getSign()).append("\t").append(node.getCode()).append("\n");
+        }
+
+        return content.toString();
+    }
+
+    public String readFile(String filePath) throws IOException {
+        if (!(new File(filePath)).isFile()) {
+            throw new FileNotFoundException("Plik nie istnieje.");
+        }
+
         if (filePath.endsWith(".cps")) {
-            ArrayList<Node> nodes = (ArrayList<Node>) decompressor.readDictionary(filePath);
-            StringBuilder content = new StringBuilder();
-
-            content.append("<sign>\t<code>\n");
-
-            for (Node node : nodes)
-            {
-                content.append(node.getSign()).append("\t").append(node.getCode()).append("\n");
-            }
-
-            return content.toString();
+            isCPSFile = true;
+            return readFileDictionary(filePath);
         }
         else {
-            Path path = Paths.get(filePath);
-            byte[] bytes = Files.readAllBytes(path);
-            return new String(bytes);
+            isCPSFile = false;
+            return readFileContent(filePath);
         }
+    }
+
+    public boolean isCPSFile() {
+        return isCPSFile;
     }
 }
