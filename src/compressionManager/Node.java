@@ -1,8 +1,8 @@
 package compressionManager;
 
 public class Node {
-    private int sign;
-    private String code;
+    private final int sign;
+    private final String code;
     private Node left;
     private Node right;
 

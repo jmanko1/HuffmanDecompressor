@@ -11,8 +11,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+/* Klasa czyta zawartość plików
+* W przypadku zwykłego pliku zwraca bajty w postaci ciągu znaków,
+* dla plików .cps zwracany jest ciąg znaków reprezentujący słownik. */
 public class fileContentReader {
-    private Decompressor decompressor;
+    private final Decompressor decompressor;
     private boolean isCPSFile;
 
     public fileContentReader() {
@@ -20,12 +23,14 @@ public class fileContentReader {
         isCPSFile = false;
     }
 
+    /* Zwraca zawartość plików */
     private String readFileContent(String filePath) throws IOException {
         Path path = Paths.get(filePath);
         byte[] bytes = Files.readAllBytes(path);
         return new String(bytes);
     }
 
+    /* Zwraca słownik pliku .cps */
     private String readFileDictionary(String filePath) throws IOException {
         ArrayList<Node> nodes = (ArrayList<Node>) decompressor.readDictionary(filePath);
         StringBuilder content = new StringBuilder();
@@ -39,6 +44,7 @@ public class fileContentReader {
         return content.toString();
     }
 
+    /* Sprawdza jaki podano plik i decyduje co zwrócić */
     public String readFile(String filePath) throws IOException {
         if (!(new File(filePath)).isFile()) {
             throw new FileNotFoundException("Plik nie istnieje.");

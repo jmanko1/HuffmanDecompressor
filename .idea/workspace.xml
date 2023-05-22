@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="a9eaeefd-fa88-476d-83e3-fac061942d72" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/compressionManager/Compressor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/compressionManager/Compressor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/compressionManager/Decompressor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/compressionManager/Decompressor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/compressionManager/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/compressionManager/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/exeRunner/ExeRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/exeRunner/ExeRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graphicalUserInterface/fileContentReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graphicalUserInterface/fileContentReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

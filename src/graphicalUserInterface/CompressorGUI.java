@@ -128,6 +128,7 @@ public class CompressorGUI {
         frame.pack();
         frame.setVisible(true);
 
+        /* Śledzi zmiany w polu ze ścieżką pliku */
         filePathInputField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -144,6 +145,7 @@ public class CompressorGUI {
                 handleInputChange();
             }
 
+            /* Wypełnia pole zawartością pliku i zmienia komunikat dot. pliku */
             private void handleInputChange() {
                 try {
                     fileContentArea.setText(fileReader.readFile(filePathInputField.getText()));
