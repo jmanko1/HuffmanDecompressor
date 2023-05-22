@@ -55,6 +55,11 @@ public class CompressorGUI {
         frame.setMinimumSize(new Dimension(450, 300));
         frame.setPreferredSize(new Dimension(700, 550));
 
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - frame.getWidth()) / 3);
+        int y = (int) ((dimension.getHeight() - frame.getHeight()) / 4);
+        frame.setLocation(x, y);
+
         // Panel opcji
         optionPanel = new JPanel();
         optionPanel.setBorder(new EmptyBorder(borderMargin, borderMargin, borderMargin, borderMargin));
