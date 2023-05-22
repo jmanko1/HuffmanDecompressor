@@ -107,7 +107,7 @@ public class CompressorGUI {
 
         // Compress button
         compressButton = new JButton("Compress");
-        compressButton.addActionListener(e -> Compress());
+        compressButton.addActionListener(e -> compress());
         compressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, compressButton.getMaximumSize().height));
         optionCompressSubPanel.add(compressButton);
 
@@ -115,7 +115,7 @@ public class CompressorGUI {
 
         // Decompress button
         decompressButton = new JButton("Decompress");
-        decompressButton.addActionListener(e -> Decompress());
+        decompressButton.addActionListener(e -> decompress());
         decompressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, decompressButton.getMaximumSize().height));
         optionCompressSubPanel.add(decompressButton);
 
@@ -169,7 +169,7 @@ public class CompressorGUI {
         }
     }
 
-    private void Compress() {
+    private void compress() {
         try {
             compressor.compress(filePathInputField.getText());
 
@@ -186,7 +186,7 @@ public class CompressorGUI {
         }
     }
 
-    private void Decompress() {
+    private void decompress() {
         try {
             decompressor.decompress(filePathInputField.getText());
             JOptionPane.showMessageDialog(frame, "Poprawnie zdekompresowano plik.", "Sukces", JOptionPane.INFORMATION_MESSAGE);

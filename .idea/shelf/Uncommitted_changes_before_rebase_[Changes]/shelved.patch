@@ -1,0 +1,194 @@
+Index: src/graphicalUserInterface/CompressorGUI.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package graphicalUserInterface;\r\n\r\nimport compressionManager.Compressor;\r\nimport compressionManager.Decompressor;\r\n\r\nimport javax.swing.*;\r\nimport javax.swing.border.EmptyBorder;\r\nimport javax.swing.event.DocumentEvent;\r\nimport javax.swing.event.DocumentListener;\r\nimport java.awt.*;\r\nimport java.io.File;\r\nimport java.io.IOException;\r\n\r\npublic class CompressorGUI {\r\n    private JFrame frame;\r\n    private JPanel optionPanel;\r\n    private JPanel optionFileSubPanel;\r\n    private JPanel optionCompressSubPanel;\r\n    private JPanel fileContentPanel;\r\n    private JLabel fileContentLabel;\r\n    private JTextField filePathInputField;\r\n    private JButton filePathInputButton;\r\n    private JButton compressButton;\r\n    private JButton decompressButton;\r\n\r\n    private final int margin;\r\n    private final int borderMargin;\r\n\r\n    private fileContentReader myReader;\r\n\r\n    public CompressorGUI()\r\n    {\r\n        margin = 5;\r\n        borderMargin = 10;\r\n\r\n        myReader = new fileContentReader();\r\n\r\n        startWindow();\r\n    }\r\n\r\n    private void startWindow() {\r\n        frame = new JFrame();\r\n        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);\r\n        frame.setTitle(\"Huffman compressor\");\r\n        frame.setMinimumSize(new Dimension(600, 600));\r\n\r\n        // Panel opcji\r\n        optionPanel = new JPanel();\r\n        optionPanel.setBorder(new EmptyBorder(borderMargin, borderMargin, borderMargin, borderMargin));\r\n        optionPanel.setLayout(new BorderLayout());\r\n        optionPanel.setBackground(Color.CYAN);\r\n        frame.add(optionPanel, BorderLayout.NORTH);\r\n\r\n        // SubPanel opcji - plik\r\n        optionFileSubPanel = new JPanel();\r\n        optionFileSubPanel.setLayout(new BorderLayout());\r\n        optionFileSubPanel.setBackground(Color.CYAN);\r\n        optionPanel.add(optionFileSubPanel, BorderLayout.NORTH);\r\n\r\n        optionPanel.add(Box.createVerticalStrut(margin));\r\n\r\n        // SubPanel opcji - kompresja\r\n        optionCompressSubPanel = new JPanel();\r\n        optionCompressSubPanel.setLayout(new BoxLayout(optionCompressSubPanel, BoxLayout.X_AXIS));\r\n        optionCompressSubPanel.setBackground(Color.CYAN);\r\n        optionPanel.add(optionCompressSubPanel, BorderLayout.SOUTH);\r\n\r\n        // Panel pliku\r\n        fileContentPanel = new JPanel();\r\n        fileContentPanel.setLayout(new GridLayout(0, 1));\r\n        fileContentPanel.setBackground(Color.RED);\r\n        frame.add(fileContentPanel);\r\n\r\n        fileContentLabel = new JLabel(\"Choose file!\");\r\n        fileContentPanel.add(fileContentLabel);\r\n\r\n        // File path input button\r\n        filePathInputButton = new MyButton(\"Choose file...\");\r\n        //filePathInputButton.setMinimumSize(new Dimension(50, 50));\r\n        //filePathInputButton.setMaximumSize(new Dimension(100, 50));\r\n        filePathInputButton.addActionListener(e -> showFileChooser(1));\r\n        optionFileSubPanel.add(filePathInputButton, BorderLayout.WEST);\r\n\r\n        // File path input\r\n        filePathInputField = new JTextField();\r\n        filePathInputField.setFont(new Font(\"Consolas\", Font.PLAIN, 12));\r\n        optionFileSubPanel.add(filePathInputField, BorderLayout.CENTER);\r\n\r\n        // Compress button\r\n        decompressButton = new MyButton(\"Compress\");\r\n        decompressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, decompressButton.getMaximumSize().height));\r\n        optionCompressSubPanel.add(decompressButton);\r\n\r\n        optionCompressSubPanel.add(Box.createHorizontalStrut(margin));\r\n\r\n        // Decompress button\r\n        compressButton = new MyButton(\"Decompress\");\r\n        compressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, compressButton.getMaximumSize().height));\r\n        optionCompressSubPanel.add(compressButton);\r\n\r\n        frame.pack();\r\n        frame.setVisible(true);\r\n\r\n        filePathInputField.getDocument().addDocumentListener(new DocumentListener() {\r\n            @Override\r\n            public void insertUpdate(DocumentEvent e) {\r\n                handleInputChange();\r\n            }\r\n\r\n            @Override\r\n            public void removeUpdate(DocumentEvent e) {\r\n                handleInputChange();\r\n            }\r\n\r\n            @Override\r\n            public void changedUpdate(DocumentEvent e) {\r\n                handleInputChange();\r\n            }\r\n\r\n            private void handleInputChange() {\r\n                try {\r\n                    fileContentLabel.setText(myReader.readFileContent(filePathInputField.getText()));\r\n                }\r\n                catch (IOException e)\r\n                {\r\n                    fileContentLabel.setText(\"lala\");\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void showFileChooser(int userChoice) {\r\n        JFileChooser fileChooser = new JFileChooser(\"C:\\\\Users\\\\Kuba\\\\IdeaProjects\\\\decompressor\\\\src\");\r\n\r\n        int returnValue = fileChooser.showOpenDialog(frame);\r\n\r\n        if (returnValue == JFileChooser.APPROVE_OPTION) {\r\n            File selectedFile = fileChooser.getSelectedFile();\r\n            String filePath = selectedFile.getAbsolutePath();\r\n\r\n            filePathInputField.setText(filePath);\r\n        }\r\n    }\r\n\r\n    private void initCompression(String filePath){\r\n        Compressor compressor = new Compressor();\r\n        try {\r\n            compressor.compress(filePath);\r\n            JOptionPane.showMessageDialog(frame, \"Poprawnie skompresowano plik\", \"Sukces\", JOptionPane.INFORMATION_MESSAGE);\r\n        } catch (Exception e) {\r\n            JOptionPane.showMessageDialog(frame, e, \"Błąd\", JOptionPane.ERROR_MESSAGE);\r\n        }\r\n    }\r\n\r\n    private void initDecompression(String filePath){\r\n        Decompressor decompressor = new Decompressor();\r\n        try {\r\n            decompressor.decompress(filePath);\r\n            JOptionPane.showMessageDialog(frame, \"Poprawnie zdekompresowano plik\", \"Sukces\", JOptionPane.INFORMATION_MESSAGE);\r\n        } catch (Exception e) {\r\n            JOptionPane.showMessageDialog(frame, e, \"Błąd\", JOptionPane.ERROR_MESSAGE);\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/graphicalUserInterface/CompressorGUI.java b/src/graphicalUserInterface/CompressorGUI.java
+--- a/src/graphicalUserInterface/CompressorGUI.java	
++++ b/src/graphicalUserInterface/CompressorGUI.java	
+@@ -2,6 +2,7 @@
+ 
+ import compressionManager.Compressor;
+ import compressionManager.Decompressor;
++import compressionManager.InvalidFileExtensionException;
+ 
+ import javax.swing.*;
+ import javax.swing.border.EmptyBorder;
+@@ -17,7 +18,8 @@
+     private JPanel optionFileSubPanel;
+     private JPanel optionCompressSubPanel;
+     private JPanel fileContentPanel;
+-    private JLabel fileContentLabel;
++    private JTextArea fileContentArea;
++    private JScrollPane fileContentScrollPane;
+     private JTextField filePathInputField;
+     private JButton filePathInputButton;
+     private JButton compressButton;
+@@ -26,6 +28,8 @@
+     private final int margin;
+     private final int borderMargin;
+ 
++    private Compressor compressor;
++    private Decompressor decompressor;
+     private fileContentReader myReader;
+ 
+     public CompressorGUI()
+@@ -33,6 +37,8 @@
+         margin = 5;
+         borderMargin = 10;
+ 
++        compressor = new Compressor();
++        decompressor = new Decompressor();
+         myReader = new fileContentReader();
+ 
+         startWindow();
+@@ -42,7 +48,7 @@
+         frame = new JFrame();
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         frame.setTitle("Huffman compressor");
+-        frame.setMinimumSize(new Dimension(600, 600));
++        frame.setMinimumSize(new Dimension(600, 400));
+ 
+         // Panel opcji
+         optionPanel = new JPanel();
+@@ -67,17 +73,18 @@
+ 
+         // Panel pliku
+         fileContentPanel = new JPanel();
+-        fileContentPanel.setLayout(new GridLayout(0, 1));
+-        fileContentPanel.setBackground(Color.RED);
++        fileContentPanel.setLayout(new BorderLayout());
+         frame.add(fileContentPanel);
+ 
+-        fileContentLabel = new JLabel("Choose file!");
+-        fileContentPanel.add(fileContentLabel);
++        // Zawartość pliku
++        fileContentArea = new JTextArea("Choose file!");
++        fileContentArea.setLineWrap(true);
++        fileContentArea.setEditable(false);
++        fileContentScrollPane = new JScrollPane(fileContentArea);
++        fileContentPanel.add(fileContentScrollPane);
+ 
+         // File path input button
+         filePathInputButton = new MyButton("Choose file...");
+-        //filePathInputButton.setMinimumSize(new Dimension(50, 50));
+-        //filePathInputButton.setMaximumSize(new Dimension(100, 50));
+         filePathInputButton.addActionListener(e -> showFileChooser(1));
+         optionFileSubPanel.add(filePathInputButton, BorderLayout.WEST);
+ 
+@@ -89,6 +96,7 @@
+         // Compress button
+         decompressButton = new MyButton("Compress");
+         decompressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, decompressButton.getMaximumSize().height));
++        decompressButton.addActionListener(e -> Compress());
+         optionCompressSubPanel.add(decompressButton);
+ 
+         optionCompressSubPanel.add(Box.createHorizontalStrut(margin));
+@@ -96,6 +104,7 @@
+         // Decompress button
+         compressButton = new MyButton("Decompress");
+         compressButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, compressButton.getMaximumSize().height));
++        compressButton.addActionListener(e -> Decompress());
+         optionCompressSubPanel.add(compressButton);
+ 
+         frame.pack();
+@@ -119,11 +128,11 @@
+ 
+             private void handleInputChange() {
+                 try {
+-                    fileContentLabel.setText(myReader.readFileContent(filePathInputField.getText()));
++                    fileContentArea.setText(myReader.readFileContent(filePathInputField.getText()));
+                 }
+-                catch (IOException e)
++                catch (IOException | InvalidFileExtensionException e)
+                 {
+-                    fileContentLabel.setText("lala");
++                    fileContentArea.setText("");
+                 }
+             }
+         });
+@@ -142,20 +151,18 @@
+         }
+     }
+ 
+-    private void initCompression(String filePath){
+-        Compressor compressor = new Compressor();
++    private void Compress(){
+         try {
+-            compressor.compress(filePath);
++            compressor.compress(filePathInputField.getText());
+             JOptionPane.showMessageDialog(frame, "Poprawnie skompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+         } catch (Exception e) {
+             JOptionPane.showMessageDialog(frame, e, "Błąd", JOptionPane.ERROR_MESSAGE);
+         }
+     }
+ 
+-    private void initDecompression(String filePath){
+-        Decompressor decompressor = new Decompressor();
++    private void Decompress(){
+         try {
+-            decompressor.decompress(filePath);
++            decompressor.decompress(filePathInputField.getText());
+             JOptionPane.showMessageDialog(frame, "Poprawnie zdekompresowano plik", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+         } catch (Exception e) {
+             JOptionPane.showMessageDialog(frame, e, "Błąd", JOptionPane.ERROR_MESSAGE);
+Index: src/graphicalUserInterface/fileContentReader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package graphicalUserInterface;\r\n\r\nimport java.io.IOException;\r\nimport java.nio.file.Files;\r\nimport java.nio.file.Path;\r\nimport java.nio.file.Paths;\r\n\r\npublic class fileContentReader {\r\n\r\n    public String readFileContent(String filePath) throws IOException {\r\n        Path path = Paths.get(filePath);\r\n        byte[] bytes = Files.readAllBytes(path);\r\n        return new String(bytes);\r\n    }\r\n}\r\n
+===================================================================
+diff --git a/src/graphicalUserInterface/fileContentReader.java b/src/graphicalUserInterface/fileContentReader.java
+--- a/src/graphicalUserInterface/fileContentReader.java	
++++ b/src/graphicalUserInterface/fileContentReader.java	
+@@ -1,15 +1,45 @@
+ package graphicalUserInterface;
+ 
++import compressionManager.Decompressor;
++import compressionManager.Node;
++import compressionManager.InvalidFileExtensionException;
++
++import java.io.File;
++import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.nio.file.Paths;
++import java.util.ArrayList;
+ 
+ public class fileContentReader {
++    private Decompressor decompressor;
++
++    public fileContentReader() {
++        decompressor = new Decompressor();
++    }
+ 
+-    public String readFileContent(String filePath) throws IOException {
+-        Path path = Paths.get(filePath);
+-        byte[] bytes = Files.readAllBytes(path);
+-        return new String(bytes);
++    public String readFileContent(String filePath) throws IOException, InvalidFileExtensionException {
++        if (new File("path/to/file.txt").isFile()) {
++            throw new FileNotFoundException("Plik " + '"' + filePath + '"' + " nie istnieje");
++        }
++
++        if (filePath.endsWith(".cps")) {
++            ArrayList<Node> nodes = (ArrayList<Node>) decompressor.readDictionary(filePath);
++            StringBuilder result = new StringBuilder();
++
++            result.append("<sign>\t<code>\n");
++
++            for (Node node : nodes) {
++                result.append(node.getSign()).append("\t").append(node.getCode()).append("\n");
++            }
++
++            return result.toString();
++        }
++        else {
++            Path path = Paths.get(filePath);
++            byte[] bytes = Files.readAllBytes(path);
++            return new String(bytes);
++        }
+     }
+ }
