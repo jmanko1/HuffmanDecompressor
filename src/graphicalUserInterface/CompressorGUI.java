@@ -51,7 +51,7 @@ public class CompressorGUI {
     private void startWindow() {
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("Huffman compressor");
+        frame.setTitle("Huffman Compressor");
         frame.setMinimumSize(new Dimension(450, 300));
         frame.setPreferredSize(new Dimension(700, 550));
 
