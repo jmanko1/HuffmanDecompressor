@@ -1,0 +1,1 @@
+Aplikacja kompresująca i dekompresująca pliki
